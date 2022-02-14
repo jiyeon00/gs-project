@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.javaEdu.admin.mapper.AdminMapper">
+
+	<!-- 아이디 조건 & 중복된 아이디 체크 -->
+    <!-- id값으로 사용자를 검색함  -->
+    <!-- DB컬럼명과 객체 속성명이 다를 때 resultMap을 사용하여 매핑해주어야함  -->
+   <resultMap id ="userMap" type ="com.javaEdu.admin.vo.AdminVO">
+      <result property ="id" column ="id"/>
+      <result property="pw" column = "pw"/>
+      <result property="name" column = "name"/>
+      <result property="email" column = "email"/>
+      <result property="phone" column = "phone"/>
+      <result property="home" column = "home"/>
+      <result property="homenumber" column = "homenumber"/>
+   </resultMap> 
+	
+	
+	<!-- 로그인하기 -->
+	<select id="getUserById" parameterType="string" resultMap="userMap">
+      SELECT * FROM memberfirst
+      WHERE id = #{id, jdbcType=VARCHAR} or email = #{id, jdbcType=VARCHAR} or homenumber = #{id, jdbcType=VARCHAR} 
+   	</select>
+   	
+
+	<!-- 가입하기 -->
+	<select id ="memberInsert" resultType="com.javaEdu.admin.vo.AdminVO">
+		insert into memberfirst(id,pw,name,phone,email,home,homenumber) 
+		values (#{id, jdbcType=VARCHAR},#{pw, jdbcType=VARCHAR},#{name, jdbcType=VARCHAR},#{phone, jdbcType=VARCHAR},
+		#{email, jdbcType=VARCHAR},#{home, jdbcType=VARCHAR},#{homenumber,jdbcType=VARCHAR})
+	</select>
+	
+	<!-- 중복아아디 체크 -->
+	<select id="idCheck" resultType="Integer">
+		SELECT COUNT (*) FROM MEMBERFIRST
+		WHERE ID =#{id, jdbcType=VARCHAR}
+	</select>
+
+	<!-- 회원정보 보여주기 -->
+	<select id="memberList" resultType="com.javaEdu.admin.vo.AdminVO">
+		SELECT NAME,PHONE,EMAIL,HOME,HOMENUMBER
+		FROM MEMBERFIRST 
+		WHERE ID = #{loginid,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 정보 업데이트  -->
+	<select id="memberEdit" resultType="String">
+		update memberfirst 
+		set name=#{name},phone=#{phone},email=#{email},home=#{home},homenumber=#{homenumber}
+		where id=#{loginid, jdbcType=VARCHAR}
+	</select> 
+	
+	<!-- 탈퇴하기 -->
+	<select id="memberDelete" resultType="String">
+		DELETE FROM MEMBERFIRST 
+		WHERE ID = #{id,jdbcType=VARCHAR} AND PW=#{pw,jdbcType=VARCHAR}
+	</select>
+	
+	
+	<!-- id 찾기  -->
+	<select id="memberFindId" parameterType="String" resultType="String">
+		SELECT ID
+		FROM MEMBERFIRST 
+		WHERE NAME = #{name, jdbcType = VARCHAR} AND EMAIL= #{email, jdbcType = VARCHAR}
+	</select>
+	
+	<!-- 비밀번호 찾기  -->
+	<select id ="memberFindPw" parameterType="String" resultType ="String">
+		SELECT ID
+		FROM MEMBERFIRST 
+		WHERE ID = #{id, jdbcType = VARCHAR} AND EMAIL= #{email, jdbcType = VARCHAR} AND HOMENUMBER= #{homenumber, jdbcType = VARCHAR}
+	</select>
+	
+	<!-- 비밀번호 변경 -->
+	<select id="memberUpdatePw" parameterType="String" resultType ="String">
+		UPDATE MEMBERFIRST 
+		SET PW = #{pw, jdbcType=VARCHAR} 
+		WHERE ID = #{resultid, jdbcType=VARCHAR}
+	</select>
+
+	
+	
+	
+	
+</mapper>
